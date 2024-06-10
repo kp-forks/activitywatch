@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, windows-latest, macOS-12]
         python_version: [3.9]
-        node_version: [16]
+        node_version: [20]
         skip_rust: [false]
         skip_webui: [false]
         experimental: [false]
@@ -36,7 +36,7 @@ jobs:
         #include:
         #  - os: ubuntu-latest
         #    python_version: 3.9
-        #    node_version: 16
+        #    node_version: 20
         #    experimental: true
 
     steps:
@@ -54,7 +54,7 @@ jobs:
 
     - name: Set up Python
       if: runner.os != 'macOS'
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python_version }}
 
@@ -96,7 +96,7 @@ jobs:
       run: |
         echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       name: Cache npm
       if: ${{ !matrix.skip_webui }}
       env:
@@ -108,7 +108,7 @@ jobs:
           ${{ runner.os }}-${{ env.cache-name }}-
 
     - name: Cache cargo build
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       if: ${{ !matrix.skip_rust && (runner.os != 'macOS') }}  # cache doesn't seem to behave nicely on macOS, see: https://github.com/ActivityWatch/aw-server-rust/issues/180
       env:
         cache-name: cargo-build-target
@@ -221,7 +221,7 @@ jobs:
         ./scripts/package/package-deb.sh
 
     - name: Upload packages
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: builds-${{ runner.os }}-py${{ matrix.python_version }}
         path: dist/activitywatch-*.*
@@ -245,7 +245,7 @@ jobs:
           echo "${{ steps.version.outputs.full }} (stable: ${{ steps.version.outputs.is_stable }})"
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9"
 
@@ -264,7 +264,7 @@ jobs:
           mv changelog.md release_notes.md
 
       - name: Upload release notes
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release_notes
           path: release_notes.md
@@ -276,7 +276,7 @@ jobs:
     steps:
       # Will download all artifacts to path
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: dist
 
